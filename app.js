@@ -3,6 +3,7 @@ const session = require("express-session");
 const passport = require("passport");
 const cors = require("cors");
 const SQLiteStore = require("connect-sqlite3")(session);
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
 require("./auth");
 const morgan = require("morgan");
@@ -10,35 +11,59 @@ const app = express();
 const nodemailer = require("nodemailer");
 const { PrismaClient } = require("@prisma/client");
 
-let transporter = nodemailer.createTransport({
-  host: "smtp.imitate.email",
-  port: 587,
-  secure: false,
+const transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
   auth: {
-    user: "4a33e00b-31c3-4f47-b2d9-018dbe4a127e",
-    password: "06d63b0e-95da-44ae-bca8-2ec47ae5d172",
+    user: "06f49a2c028e02",
+    pass: "199cbeb237342c",
   },
 });
+
 const Prisma = new PrismaClient();
 function isLoggedIn(req, res, next) {
+  console.log("Request Headers:", req.headers.cookie);
   req.user ? next() : res.sendStatus(401);
 }
 app.use(express.json());
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms"),
 );
+const MongoDBStore = require("connect-mongodb-session")(session);
+
+const uri =
+  "mongodb+srv://boodycat09:S7lD6rKlIa19stFb@cluster0.jpx8x24.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+const client = new MongoDBStore({
+  uri: uri,
+  databaseName: "session",
+});
+
+const readConcern = new MongoClient(uri);
+client.on("error", function (error) {
+  console.log(error);
+});
 
 app.use(
   session({
-    store: new SQLiteStore({
-      db: "sessions.db",
-      concurrentDB: true,
-    }),
+    store: client,
     secret: "stackoverflow",
+
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
+    rolling: true, // Enable rolling sessions
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+      secure: false,
+    },
   }),
 );
+app.use((req, res, next) => {
+  // Save user IP and user-agent in session
+  req.session.ip = req.ip;
+  req.session.userAgent = req.get("User-Agent");
+  next();
+});
 
 app.use((req, res, next) => {
   req.session.agent = req.headers["user-agent"];
@@ -101,9 +126,51 @@ app.post("/auth/register/", async (req, res) => {
   res.status(201).json({ message: "User created successfully" });
 });
 
-app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
-  res.json({ message: "User logged in successfully" });
+app.get("/auth/listAllSessions/", (req, res) => {
+  const result = client.all(function (err, sessions) {
+    res.json(sessions);
+  });
 });
+
+app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
+  res.cookie("user", req.user);
+
+  // Set a session variable
+  req.session.myData = "hello world";
+  const userData = JSON.stringify(req.user);
+  // Set a custom cookie
+  res.cookie("myCustomCookie", userData, {
+    maxAge: 20000000,
+    httpOnly: true,
+  });
+
+  req.session.myData = "hello world";
+  res.json({ message: "User logged in successfully", user: req.user });
+});
+
+app.post("/auth/register/", async (req, res) => {
+  const { email, password } = req.body;
+  const user = await Prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (user) {
+    res.status(400).json({ message: "User already exists" });
+  }
+
+  await Prisma.user.create({
+    data: {
+      email: email,
+      password: password,
+      name: "",
+    },
+  });
+
+  res.status(201).json({ message: "User created successfully" });
+});
+
 app.get("/auth/profile/", (req, res) => {
   console.log("req.user", req.user);
   res.json(req.user);
@@ -133,12 +200,21 @@ app.get("/get-user/", (req, res) => {
 });
 
 app.get("/protected", isLoggedIn, (req, res) => {
-  res.redirect("http://localhost:3000/success");
+  const userData = JSON.stringify(req.user);
+  // Set a custom cookie
+  res.cookie("myCustomCookie", userData, {
+    maxAge: 20000000,
+    httpOnly: true,
+  });
+
+  res.user = req.user;
+
+  res.redirect("http://localhost:3000/profile");
 });
 
 app.post("/post/create/", isLoggedIn, async (req, res) => {
   const { title, content } = req.body;
-
+  console.log("req.user.id", req.user);
   const post = await Prisma.post.create({
     data: {
       title: title,
@@ -148,34 +224,99 @@ app.post("/post/create/", isLoggedIn, async (req, res) => {
   });
   res.json(post);
 });
-app.get("/posts/", isLoggedIn, async (req, res) => {
-  const posts = await Prisma.post.findMany();
-  res.json(posts);
+
+app.get("/posts", isLoggedIn, async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10; // Default page size is 10, you can change it as needed
+  const skip = (page - 1) * pageSize;
+
+  try {
+    const totalPosts = await Prisma.post.count();
+    const posts = await Prisma.post.findMany({
+      skip: skip,
+      take: pageSize,
+      include: {
+        author: true,
+      },
+    });
+
+    const totalPages = Math.ceil(totalPosts / pageSize);
+
+    console.log(posts);
+    res.json({
+      posts,
+      currentPage: page,
+      totalPages,
+      pageSize,
+      totalPosts,
+    });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/get-auth-related-sessions/", (req, res) => {
+  const allDataFromSessionStore = client.all();
+  console.log("allDataFromSessionStore", allDataFromSessionStore);
+  const sessions = Object.values(allDataFromSessionStore);
+  console.log(sessions);
 });
 
 app.get("/user-data", isLoggedIn, (req, res) => {
   res.json({ user: req.user });
 });
 
-// Assuming app is your Express application instance
-app.get("/logout", function (req, res, next) {
-  console.log(req.user);
+app.get("/say-something", (req, res) => {
+  res.send("Hello, World!");
+});
 
-  // Delete session from database
-  req.session.destroy(function (err) {
+app.get("/auth/active-sessions", async (req, res) => {
+  await readConcern.connect();
+  const database = readConcern.db();
+  const collections = await database.listCollections().toArray();
+
+  const collectionNames = collections.map((collection) => collection.name);
+
+  console.log(collectionNames);
+
+  res.json({
+    collections: collectionNames,
+  });
+});
+
+app.get("/logout", function (req, res, next) {
+  console.log("______________ start logout______________");
+  console.log("______________ start req user______________");
+  console.log(req.user);
+  console.log("______________  end req user______________");
+  console.log(req.logout);
+  console.log("______________ end logout______________");
+  req.logout(function (err) {
     if (err) {
       return next(err);
     }
     res.json({ message: "Logged out" });
   });
 });
-
 app.get("/sessions", (req, res) => {
   res.json(req.sessionStore);
 });
 
 app.get("/auth/google/failure", (req, res) => {
   res.send("Failed to authenticate..");
+});
+
+app.post("/send-email", async (req, res) => {
+  const info = await transport.sendMail({
+    from: "from@example.com", // sender address
+    to: "aquaaurelia@yogirt.com", // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello world?", // plain text body
+    html: "<b>Hello world?</b>", // html body
+  });
+
+  res.json({ message: "Email sent successfully" });
 });
 
 app.listen(5000, () => console.log("listening on port: 5000"));

@@ -10,9 +10,6 @@ const Prisma = new PrismaClient();
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
-    console.log("username", username);
-    console.log("password", password);
-
     const user = await Prisma.user.findUnique({
       where: {
         email: username,
@@ -34,19 +31,46 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:5000/auth/google/callback",
     },
-    function (request, accessToken, refreshToken, profile, done) {
-      return done(null, profile);
+    async function (request, accessToken, refreshToken, profile, done) {
+      const user = await Prisma.user.findUnique({
+        where: {
+          email: profile.email,
+        },
+      });
+      if (user) {
+        return done(null, {
+          ...profile,
+          ...user,
+        });
+      }
+
+      if (!user) {
+        await Prisma.user.create({
+          data: {
+            email: profile.email,
+            password: "dssfs",
+            name: profile.displayName,
+          },
+        });
+        return done(null, user);
+      }
+
+      if (user) {
+        return done(null, user);
+      }
     },
   ),
 );
 
 passport.serializeUser(function (user, done) {
-  console.log("serializeUser user", user);
-  console.log("Done", done);
   done(null, user);
 });
 
 passport.deserializeUser(function (user, done) {
-  console.log("deserializeUser user", user);
   done(null, user);
 });
+
+//s%3AFWw7zN6KROQHRz_xvdeBOXICeVV8LQHH.rdyNW535%2BHsaWdbgClvpJb%2BXsKp8Xg4BK7R3VN0R%2B6Y
+// poss man
+// s%3AFWw7zN6KROQHRz_xvdeBOXICeVV8LQHH.rdyNW535%2BHsaWdbgClvpJb%2BXsKp8Xg4BK7R3VN0R%2B6Y
+// browser connect.sid=s:AZgwpnuucznw3AE6qlb8z2Ital5evf1d.UvSVaOO6VFXxTVgHPVToEa45wX9t3mW/iVJOgwYAw+M
