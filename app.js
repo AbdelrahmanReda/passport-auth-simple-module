@@ -22,7 +22,7 @@ const transport = nodemailer.createTransport({
 
 const Prisma = new PrismaClient();
 function isLoggedIn(req, res, next) {
-  console.log("Request Headers:", req.headers.cookie);
+  console.log("Request Headers:", req.headers);
   req.user ? next() : res.sendStatus(401);
 }
 app.use(express.json());
@@ -72,7 +72,7 @@ app.use((req, res, next) => {
 });
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://next-auth-app-six-delta.vercel.app/",
+  "https://next-auth-app-six-delta.vercel.app",
 ];
 
 app.use(
