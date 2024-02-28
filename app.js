@@ -47,8 +47,8 @@ client.on("error", function (error) {
 app.use(
   session({
     store: client,
-    secret: "stackoverflow",
-
+    secret:
+      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8",
     resave: false,
     saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
     rolling: true, // Enable rolling sessions
@@ -70,9 +70,21 @@ app.use((req, res, next) => {
   req.session.ip = req.socket.remoteAddress;
   next();
 });
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://next-auth-app-six-delta.vercel.app/",
+];
+
 app.use(
   cors({
-    origin: `${process.env.CLIENT_URL}`,
+    origin: function (origin, callback) {
+      // Check if the origin is in the allowedOrigins array or if it is undefined (which happens with same-origin requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // allow session cookie from browser to pass through
   }),
