@@ -137,7 +137,7 @@ app.get("/auth/listAllSessions/", (req, res) => {
 });
 
 app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
-  res.cookie("user", req.user, {
+  /*  res.cookie("user", req.user, {
     sameSite: "none",
     secure: true,
   });
@@ -153,7 +153,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     sameSite: "none",
   });
 
-  req.session.myData = "hello world";
+  req.session.myData = "hello world";*/
   res.json({ message: "User logged in successfully", user: req.user });
 });
 
