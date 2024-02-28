@@ -53,11 +53,6 @@ app.use(
     resave: false,
     saveUninitialized: false,
     rolling: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-      secure: false, // Set to true for production
-      SameSite: "none", // Set to none for production
-    },
   }),
 );
 
