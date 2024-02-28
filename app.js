@@ -71,7 +71,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  }),
+);
 app.use(passport.initialize());
 app.use(passport.session());
 app.set("view engine", "ejs");
