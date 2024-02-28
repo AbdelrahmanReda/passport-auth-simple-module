@@ -53,8 +53,10 @@ app.use(
     saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
     rolling: true, // Enable rolling sessions
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-      secure: false,
+      maxAge: 24 * 60 * 60 * 100,
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
     },
   }),
 );
