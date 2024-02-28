@@ -139,6 +139,7 @@ app.get("/auth/listAllSessions/", (req, res) => {
 app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   res.cookie("user", req.user, {
     sameSite: "none",
+    secure: true,
   });
 
   // Set a session variable
@@ -148,7 +149,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   res.cookie("myCustomCookie", userData, {
     maxAge: 20000000,
     httpOnly: true,
-    secure: "auto",
+    secure: true,
     sameSite: "none",
   });
 
