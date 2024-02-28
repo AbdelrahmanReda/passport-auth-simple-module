@@ -156,6 +156,12 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   req.session.myData = "hello world";
   const userData = JSON.stringify(req.user);
   // Set a custom cookie
+  res.cookie("myCustomCookie", userData, {
+    maxAge: 24 * 60 * 60 * 100,
+    secure: false,
+    httpOnly: false,
+    sameSite: "none",
+  });
 
   req.session.myData = "hello world";
   res.json({ message: "User logged in successfully", user: req.user });
