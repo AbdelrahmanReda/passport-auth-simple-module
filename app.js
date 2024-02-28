@@ -53,6 +53,11 @@ app.use(
     resave: false,
     saveUninitialized: false,
     rolling: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+      sameSite: "none",
+      secure: true,
+    },
   }),
 );
 
