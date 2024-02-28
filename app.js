@@ -73,13 +73,27 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  cors({
-    origin: "https://next-auth-app-six-delta.vercel.app/",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  }),
-);
+const allowedOrigins = [
+  "https://next-auth-app-six-delta.vercel.app",
+  // Add more origins as needed
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  preflightContinue: false, // Disable preflight caching
+  optionsSuccessStatus: 204, // Set the status code for successful OPTIONS requests
+};
+
+app.use(cors(corsOptions));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.set("view engine", "ejs");
