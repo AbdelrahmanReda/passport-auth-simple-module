@@ -29,7 +29,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:5000/auth/google/callback",
+      callbackURL: "/auth/google/callback",
     },
     async function (request, accessToken, refreshToken, profile, done) {
       const user = await Prisma.user.findUnique({
