@@ -55,7 +55,7 @@ app.use(
     rolling: true,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-      secure: true, // Set to true for production
+      secure: false, // Set to true for production
       sameSite: "none", // Set to none for production
     },
   }),
