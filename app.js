@@ -70,25 +70,15 @@ app.use((req, res, next) => {
   req.session.ip = req.socket.remoteAddress;
   next();
 });
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://next-auth-app-six-delta.vercel.app",
-];
+const corsOptions = {
+  origin: [
+    "https://passport-auth-simple-module.onrender.com",
+    "http://localhost:3000",
+  ],
+  optionsSuccessStatus: 200, // For legacy browser support
+};
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Check if the origin is in the allowedOrigins array or if it is undefined (which happens with same-origin requests)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // allow session cookie from browser to pass through
-  }),
-);
+app.use(cors(corsOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 app.set("view engine", "ejs");
