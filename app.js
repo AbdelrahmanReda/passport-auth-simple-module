@@ -208,8 +208,7 @@ app.get("/protected", isLoggedIn, (req, res) => {
   });
 
   res.user = req.user;
-
-  res.redirect(`${process.env.CLIENT_URL}/protected`);
+  res.redirect(`${process.env.CLIENT_URL}/posts`);
 });
 
 app.post("/post/create/", isLoggedIn, async (req, res) => {
