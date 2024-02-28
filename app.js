@@ -209,7 +209,7 @@ app.get("/protected", isLoggedIn, (req, res) => {
 
   res.user = req.user;
 
-  res.redirect("http://localhost:3000/profile");
+  res.redirect(`${process.env.CLIENT_URL}/protected`);
 });
 
 app.post("/post/create/", isLoggedIn, async (req, res) => {
