@@ -56,7 +56,7 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
       secure: false, // Set to true for production
-      sameSite: "none", // Set to none for production
+      SameSite: "none", // Set to none for production
     },
   }),
 );
