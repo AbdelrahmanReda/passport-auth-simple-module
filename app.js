@@ -48,19 +48,16 @@ app.use(
   session({
     store: client,
     secret:
-      process.env.SESSION_SECRET ||
-      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8", // Use environment variable for secret
+      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8",
     resave: false,
-    saveUninitialized: false,
-    rolling: true,
+    saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
+    rolling: true, // Enable rolling sessions
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-      sameSite: "none",
-      secure: true,
+      secure: false,
     },
   }),
 );
-
 app.use((req, res, next) => {
   // Save user IP and user-agent in session
   req.session.ip = req.ip;
@@ -137,23 +134,14 @@ app.get("/auth/listAllSessions/", (req, res) => {
 });
 
 app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
-  /*  res.cookie("user", req.user, {
-    sameSite: "none",
-    secure: true,
-  });
+  res.cookie("user", req.user);
 
   // Set a session variable
   req.session.myData = "hello world";
   const userData = JSON.stringify(req.user);
   // Set a custom cookie
-  res.cookie("myCustomCookie", userData, {
-    maxAge: 20000000,
-    httpOnly: true,
-    secure: false,
-    sameSite: "none",
-  });
 
-  req.session.myData = "hello world";*/
+  req.session.myData = "hello world";
   res.json({ message: "User logged in successfully", user: req.user });
 });
 
@@ -211,10 +199,6 @@ app.get("/get-user/", (req, res) => {
 app.get("/protected", isLoggedIn, (req, res) => {
   const userData = JSON.stringify(req.user);
   // Set a custom cookie
-  /*  res.cookie("myCustomCookie", userData, {
-    maxAge: 20000000,
-    httpOnly: true,
-  });*/
 
   res.user = req.user;
   res.redirect(`${process.env.CLIENT_URL}/posts`);
