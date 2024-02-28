@@ -44,6 +44,22 @@ client.on("error", function (error) {
   console.log(error);
 });
 
+app.use(
+  session({
+    store: client,
+    secret:
+      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8",
+    resave: false,
+    saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
+    rolling: true, // Enable rolling sessions
+    cookie: {
+      maxAge: 24 * 60 * 60 * 100,
+      secure: false,
+      httpOnly: false,
+      sameSite: "none",
+    },
+  }),
+);
 app.use((req, res, next) => {
   // Save user IP and user-agent in session
   req.session.ip = req.ip;
@@ -80,24 +96,6 @@ app.use(cors(corsOptions));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(
-  session({
-    store: client,
-    secret:
-      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8",
-    resave: false,
-    saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
-    rolling: true, // Enable rolling sessions
-    cookie: {
-      maxAge: 24 * 60 * 60 * 100,
-      secure: false,
-      httpOnly: false,
-      sameSite: "none",
-    },
-  }),
-);
-
 app.set("view engine", "ejs");
 app.get("/", (req, res) => {
   res.render("login");
