@@ -76,7 +76,10 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://passport-auth-simple-module.onrender.com"
+        : "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
