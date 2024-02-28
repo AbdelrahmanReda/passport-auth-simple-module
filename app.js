@@ -48,16 +48,19 @@ app.use(
   session({
     store: client,
     secret:
-      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8",
+      process.env.SESSION_SECRET ||
+      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8", // Use environment variable for secret
     resave: false,
-    saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
-    rolling: true, // Enable rolling sessions
+    saveUninitialized: false,
+    rolling: true,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-      secure: false,
+      secure: true, // Set to true for production
+      sameSite: "strict", // Add sameSite attribute for better security
     },
   }),
 );
+
 app.use((req, res, next) => {
   // Save user IP and user-agent in session
   req.session.ip = req.ip;
