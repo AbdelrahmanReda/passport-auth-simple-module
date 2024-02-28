@@ -72,7 +72,7 @@ app.use((req, res, next) => {
 });
 const corsOptions = {
   origin: [
-    "https://passport-auth-simple-module.onrender.com",
+    "https://next-auth-app-six-delta.vercel.app",
     "http://localhost:3000",
   ],
   optionsSuccessStatus: 200, // For legacy browser support
