@@ -146,6 +146,8 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   res.cookie("myCustomCookie", userData, {
     maxAge: 20000000,
     httpOnly: true,
+    secure: "auto",
+    sameSite: "none",
   });
 
   req.session.myData = "hello world";
