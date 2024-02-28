@@ -211,10 +211,10 @@ app.get("/get-user/", (req, res) => {
 app.get("/protected", isLoggedIn, (req, res) => {
   const userData = JSON.stringify(req.user);
   // Set a custom cookie
-  res.cookie("myCustomCookie", userData, {
+  /*  res.cookie("myCustomCookie", userData, {
     maxAge: 20000000,
     httpOnly: true,
-  });
+  });*/
 
   res.user = req.user;
   res.redirect(`${process.env.CLIENT_URL}/posts`);
