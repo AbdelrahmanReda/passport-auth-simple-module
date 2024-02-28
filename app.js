@@ -70,15 +70,8 @@ app.use((req, res, next) => {
   req.session.ip = req.socket.remoteAddress;
   next();
 });
-const corsOptions = {
-  origin: [
-    "https://next-auth-app-six-delta.vercel.app",
-    "http://localhost:3000",
-  ],
-  optionsSuccessStatus: 200, // For legacy browser support
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 app.set("view engine", "ejs");
