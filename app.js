@@ -54,8 +54,8 @@ app.use(
     rolling: true, // Enable rolling sessions
     cookie: {
       maxAge: 24 * 60 * 60 * 100,
-      secure: true,
-      httpOnly: true,
+      secure: false,
+      httpOnly: false,
       sameSite: "none",
     },
   }),
@@ -75,7 +75,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://next-auth-app-six-delta.vercel.app/",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
