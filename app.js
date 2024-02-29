@@ -92,6 +92,8 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE"],
   preflightContinue: false, // Disable preflight caching
   optionsSuccessStatus: 204, // Set the status code for successful OPTIONS requests
+  allowedHeaders:
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization", // Add this line
 };
 
 app.use(cors(corsOptions));
