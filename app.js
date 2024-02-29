@@ -55,9 +55,6 @@ app.use(
     rolling: true, // Enable rolling sessions
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
       domain: "https://next-auth-app-six-delta.vercel.app",
     },
   }),
