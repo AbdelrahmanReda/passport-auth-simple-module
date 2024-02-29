@@ -55,6 +55,7 @@ app.use(
     rolling: true, // Enable rolling sessions
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
       domain: "https://next-auth-app-six-delta.vercel.app",
     },
   }),
@@ -157,7 +158,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     maxAge: 24 * 60 * 60 * 100,
     secure: true,
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: "none",
     domain: "https://next-auth-app-six-delta.vercel.app",
   });
 
