@@ -56,7 +56,7 @@ app.use(
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
-      httpOnly: true,
+      httpOnly: false,
       sameSite: "none",
     },
   }),
@@ -161,7 +161,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   res.cookie("myCustomCookie", userData, {
     maxAge: 24 * 60 * 60 * 100,
     secure: true,
-    httpOnly: true,
+    httpOnly: false,
     sameSite: "none",
   });
 
