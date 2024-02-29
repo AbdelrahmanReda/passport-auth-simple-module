@@ -58,6 +58,7 @@ app.use(
       secure: true,
       httpOnly: true,
       sameSite: "none",
+      domain: "https://next-auth-app-six-delta.vercel.app",
     },
   }),
 );
@@ -159,7 +160,8 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     maxAge: 24 * 60 * 60 * 100,
     secure: true,
     httpOnly: true,
-    sameSite: "none",
+    sameSite: "strict",
+    domain: "https://next-auth-app-six-delta.vercel.app",
   });
 
   req.session.myData = "hello world";
