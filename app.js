@@ -56,7 +56,8 @@ app.use(
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "none",
-      domain: "https://next-auth-app-six-delta.vercel.app",
+      path: "/",
+      domain: "https://next-auth-app-six-delta.vercel.app/login",
     },
   }),
 );
@@ -74,7 +75,7 @@ app.use((req, res, next) => {
 });
 
 const allowedOrigins = [
-  "https://next-auth-app-six-delta.vercel.app",
+  "https://next-auth-app-six-delta.vercel.app/login",
   // Add more origins as needed
 ];
 
@@ -159,7 +160,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: "none",
-    domain: "https://next-auth-app-six-delta.vercel.app",
+    domain: "https://next-auth-app-six-delta.vercel.app/login",
   });
 
   req.session.myData = "hello world";
