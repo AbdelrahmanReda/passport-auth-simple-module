@@ -55,6 +55,8 @@ app.use(
     rolling: true, // Enable rolling sessions
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
+      httpOnly: true,
       sameSite: "none",
     },
   }),
@@ -162,6 +164,9 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   });
 
   req.session.myData = "hello world";
+  console.log("******************");
+  console.log("res", res.getHeaders());
+  console.log("//////////////////////");
   res.json({ message: "User logged in successfully", user: req.user });
 });
 
