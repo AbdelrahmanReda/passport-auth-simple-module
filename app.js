@@ -57,7 +57,7 @@ app.use(
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "strict",
     },
   }),
 );
@@ -162,7 +162,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     maxAge: 24 * 60 * 60 * 100,
     secure: true,
     httpOnly: true,
-    sameSite: "none",
+    sameSite: "strict",
   });
 
   req.session.myData = "hello world";
