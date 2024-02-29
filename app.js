@@ -151,8 +151,6 @@ app.get("/auth/listAllSessions/", (req, res) => {
 });
 
 app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
-  res.cookie("user", req.user);
-
   // Set a session variable
   req.session.myData = "hello world";
   const userData = JSON.stringify(req.user);
