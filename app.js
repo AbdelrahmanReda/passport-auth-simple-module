@@ -54,7 +54,7 @@ app.use(
     rolling: true, // Enable rolling sessions
     cookie: {
       maxAge: 24 * 60 * 60 * 100,
-      secure: false,
+      Secure: false,
       httpOnly: false,
       sameSite: "none",
     },
@@ -158,7 +158,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   // Set a custom cookie
   res.cookie("myCustomCookie", userData, {
     maxAge: 24 * 60 * 60 * 100,
-    secure: false,
+    Secure: false,
     httpOnly: false,
     sameSite: "none",
   });
