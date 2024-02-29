@@ -56,7 +56,6 @@ app.use(
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "none",
-      path: "/",
       domain: "https://next-auth-app-six-delta.vercel.app/login",
     },
   }),
@@ -75,7 +74,8 @@ app.use((req, res, next) => {
 });
 
 const allowedOrigins = [
-  "https://next-auth-app-six-delta.vercel.app/login",
+  "https://next-auth-app-six-delta.vercel.app",
+  "http://localhost:3000",
   // Add more origins as needed
 ];
 
