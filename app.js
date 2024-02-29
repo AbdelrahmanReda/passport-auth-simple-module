@@ -54,9 +54,9 @@ app.use(
     saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
     rolling: true, // Enable rolling sessions
     cookie: {
-      maxAge: 24 * 60 * 60 * 100,
-      secure: false,
-      httpOnly: false,
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
+      httpOnly: true,
       sameSite: "none",
     },
   }),
@@ -159,8 +159,8 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
   // Set a custom cookie
   res.cookie("myCustomCookie", userData, {
     maxAge: 24 * 60 * 60 * 100,
-    secure: false,
-    httpOnly: false,
+    secure: true,
+    httpOnly: true,
     sameSite: "none",
   });
 
