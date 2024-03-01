@@ -58,7 +58,7 @@ app.use(
       secure: true,
       httpOnly: true,
       sameSite: "strict",
-      domain: "http://localhost:3000",
+      domain: ".next-auth-app-six-delta.vercel.app",
     },
   }),
 );
@@ -77,7 +77,7 @@ app.use((req, res, next) => {
 
 const allowedOrigins = [
   "https://next-auth-app-six-delta.vercel.app",
-  "http://localhost:3000",
+  ".next-auth-app-six-delta.vercel.app",
   // Add more origins as needed
 ];
 
@@ -164,7 +164,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: "strict",
-    domain: "http://localhost:3000",
+    domain: ".next-auth-app-six-delta.vercel.app",
   });
 
   req.session.myData = "hello world";
