@@ -99,7 +99,7 @@ const corsOptions = {
 // Set up CORS to allow requests from your frontend domain
 app.use(
   cors({
-    origin: "next-auth-app-six-delta.vercel.app",
+    origin: "https://next-auth-app-six-delta.vercel.app",
     credentials: true, // allow session cookie from browser to be sent
   }),
 );
