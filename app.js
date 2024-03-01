@@ -10,7 +10,12 @@ const morgan = require("morgan");
 const app = express();
 const nodemailer = require("nodemailer");
 const { PrismaClient } = require("@prisma/client");
-
+app.use(
+  cors({
+    origin: "https://next-auth-app-six-delta.vercel.app",
+    credentials: true, // allow session cookie from browser to be sent
+  }),
+);
 const transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
@@ -97,12 +102,6 @@ const corsOptions = {
 /*app.use(cors(corsOptions));*/
 
 // Set up CORS to allow requests from your frontend domain
-app.use(
-  cors({
-    origin: "https://next-auth-app-six-delta.vercel.app",
-    credentials: true, // allow session cookie from browser to be sent
-  }),
-);
 
 app.use(passport.initialize());
 app.use(passport.session());
