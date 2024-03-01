@@ -58,6 +58,7 @@ app.use(
       secure: true,
       httpOnly: true,
       sameSite: "strict",
+      domain: "http://localhost:3000",
     },
   }),
 );
@@ -163,6 +164,7 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: "strict",
+    domain: "http://localhost:3000",
   });
 
   req.session.myData = "hello world";
