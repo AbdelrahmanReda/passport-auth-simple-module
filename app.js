@@ -94,7 +94,15 @@ const corsOptions = {
     "Origin, X-Requested-With, Content-Type, Accept, Authorization", // Add this line
 };
 
-app.use(cors(corsOptions));
+/*app.use(cors(corsOptions));*/
+
+// Set up CORS to allow requests from your frontend domain
+app.use(
+  cors({
+    origin: "next-auth-app-six-delta.vercel.app",
+    credentials: true, // allow session cookie from browser to be sent
+  }),
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
