@@ -44,20 +44,18 @@ client.on("error", function (error) {
   console.log(error);
 });
 
-app.set("trust proxy", 1);
 app.use(
   session({
-    store: client,
-    secret:
-      "MhJwU5b37Vx8snMG4AZidebftVB7JxNYP237klqFDsgt1P832X23qCOFbMYxqtO3Z6pwfwm8",
+    secret: "your-secret-key",
     resave: false,
-    saveUninitialized: false, // Set to false to prevent saving uninitialized sessions
-    rolling: true, // Enable rolling sessions
+    saveUninitialized: false,
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000,
       secure: true,
       httpOnly: true,
-      sameSite: "none",
+      maxAge: 3600000, // 1 hour in milliseconds
+      domain: "next-auth-app-six-delta.vercel.app",
+      path: "/",
+      sameSite: "strict",
     },
   }),
 );
@@ -164,6 +162,8 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     httpOnly: true,
     sameSite: "none",
   });
+
+  res.cookie("testCookie", "mamhoud");
 
   req.session.myData = "hello world";
   console.log("******************");
