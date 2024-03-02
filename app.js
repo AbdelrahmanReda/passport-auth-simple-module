@@ -10,12 +10,7 @@ const morgan = require("morgan");
 const app = express();
 const nodemailer = require("nodemailer");
 const { PrismaClient } = require("@prisma/client");
-app.use(
-  cors({
-    origin: "https://next-auth-app-six-delta.vercel.app",
-    credentials: true, // allow session cookie from browser to be sent
-  }),
-);
+
 const transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
@@ -26,6 +21,46 @@ const transport = nodemailer.createTransport({
 });
 
 const Prisma = new PrismaClient();
+
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: true,
+      httpOnly: true,
+      maxAge: 3600000, // 1 hour in milliseconds
+      domain: "next-auth-app-six-delta.vercel.app",
+      path: "/",
+      sameSite: "strict",
+    },
+  }),
+);
+
+const allowedOrigins = [
+  "https://next-auth-app-six-delta.vercel.app",
+  "http://localhost:3000/",
+];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  preflightContinue: false, // Disable preflight caching
+  optionsSuccessStatus: 204, // Set the status code for successful OPTIONS requests
+  allowedHeaders:
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization", // Add this line
+};
+
+app.use(cors(corsOptions));
+
 function isLoggedIn(req, res, next) {
   console.log("Request Headers:", req.headers);
   req.user ? next() : res.sendStatus(401);
@@ -49,63 +84,11 @@ client.on("error", function (error) {
   console.log(error);
 });
 
-app.use(
-  session({
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: true,
-      httpOnly: true,
-      maxAge: 3600000, // 1 hour in milliseconds
-      domain: "next-auth-app-six-delta.vercel.app",
-      path: "/",
-      sameSite: "strict",
-    },
-  }),
-);
-app.use((req, res, next) => {
-  // Save user IP and user-agent in session
-  req.session.ip = req.ip;
-  req.session.userAgent = req.get("User-Agent");
-  next();
-});
-
-app.use((req, res, next) => {
-  req.session.agent = req.headers["user-agent"];
-  req.session.ip = req.socket.remoteAddress;
-  next();
-});
-
-const allowedOrigins = [
-  "https://next-auth-app-six-delta.vercel.app",
-  ".next-auth-app-six-delta.vercel.app",
-  // Add more origins as needed
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  preflightContinue: false, // Disable preflight caching
-  optionsSuccessStatus: 204, // Set the status code for successful OPTIONS requests
-  allowedHeaders:
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization", // Add this line
-};
-
-/*app.use(cors(corsOptions));*/
-
 // Set up CORS to allow requests from your frontend domain
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.set("view engine", "ejs");
+
 app.get("/", (req, res) => {
   res.render("login");
 });
