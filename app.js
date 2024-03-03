@@ -37,16 +37,18 @@ const Prisma = new PrismaClient();
 
 const allowedOrigins = [
   "https://next-auth-app-six-delta.vercel.app",
-  "http://localhost:3000/",
+  "http://localhost:3000",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log("origin", origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 
   credentials: true,
 };
