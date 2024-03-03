@@ -4,12 +4,25 @@ const passport = require("passport");
 const cors = require("cors");
 const SQLiteStore = require("connect-sqlite3")(session);
 const { MongoClient, ServerApiVersion } = require("mongodb");
-
+const MongoDBStore = require("connect-mongodb-session")(session);
 require("./auth");
 const morgan = require("morgan");
 const app = express();
 const nodemailer = require("nodemailer");
 const { PrismaClient } = require("@prisma/client");
+
+const uri =
+  "mongodb+srv://boodycat09:S7lD6rKlIa19stFb@cluster0.jpx8x24.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+const client = new MongoDBStore({
+  uri: uri,
+  databaseName: "session",
+});
+
+const readConcern = new MongoClient(uri);
+client.on("error", function (error) {
+  console.log(error);
+});
 
 const transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
@@ -21,22 +34,6 @@ const transport = nodemailer.createTransport({
 });
 
 const Prisma = new PrismaClient();
-
-app.use(
-  session({
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: true,
-      httpOnly: true,
-      maxAge: 3600000, // 1 hour in milliseconds
-      domain: "next-auth-app-six-delta.vercel.app",
-      path: "/",
-      sameSite: "strict",
-    },
-  }),
-);
 
 const allowedOrigins = [
   "https://next-auth-app-six-delta.vercel.app",
@@ -52,42 +49,45 @@ const corsOptions = {
   },
 
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  preflightContinue: false, // Disable preflight caching
-  optionsSuccessStatus: 204, // Set the status code for successful OPTIONS requests
-  allowedHeaders:
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization", // Add this line
 };
 
 app.use(cors(corsOptions));
 
+app.use(
+  session({
+    secret: "iUn4Iu7sePefyNrBqxW6TfwHnCdnf1lxIxokZeXmOvLIgG6RSaMHN",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      httpOnly: false,
+      maxAge: 3600000, // 1 hour in milliseconds
+      domain:
+        process.env.NODE_ENV === "production"
+          ? "https://next-auth-app-six-delta.vercel.app"
+          : "http://localhost:3000",
+      path: "/",
+      sameSite: "none",
+    },
+    store: client,
+  }),
+);
+
+app.use(passport.authenticate("session"));
+app.use(passport.initialize());
+app.use(passport.session());
+
 function isLoggedIn(req, res, next) {
-  console.log("Request Headers:", req.headers);
+  console.log("req.Header:", req.headers);
+  console.log("req.user:", req.user);
   req.user ? next() : res.sendStatus(401);
 }
 app.use(express.json());
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms"),
 );
-const MongoDBStore = require("connect-mongodb-session")(session);
-
-const uri =
-  "mongodb+srv://boodycat09:S7lD6rKlIa19stFb@cluster0.jpx8x24.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-const client = new MongoDBStore({
-  uri: uri,
-  databaseName: "session",
-});
-
-const readConcern = new MongoClient(uri);
-client.on("error", function (error) {
-  console.log(error);
-});
 
 // Set up CORS to allow requests from your frontend domain
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.render("login");
@@ -142,8 +142,6 @@ app.get("/auth/listAllSessions/", (req, res) => {
 });
 
 app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
-  // Set a session variable
-  req.session.myData = "hello world";
   const userData = JSON.stringify(req.user);
   // Set a custom cookie
   res.cookie("myCustomCookie", userData, {
@@ -151,14 +149,9 @@ app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: "none",
+    domain: "https://localhost:3000",
   });
-
-  res.cookie("testCookie", "mamhoud");
-
-  req.session.myData = "hello world";
-  console.log("******************");
-  console.log("res", res.getHeaders());
-  console.log("//////////////////////");
+  console.log("req.user", req.user);
   res.json({ message: "User logged in successfully", user: req.user });
 });
 
