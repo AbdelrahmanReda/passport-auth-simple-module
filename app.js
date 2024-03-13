@@ -153,6 +153,7 @@ app.post("/set-cookie-test", (req, res) => {
   res.cookie("yourCookieName", "yourCookieValue", {
     // domain: '.example.com', // Omit or adjust if setting cookies for subdomains
     path: "/",
+    domain: "https://next-auth-app-six-delta.vercel.app/",
     httpOnly: true, // Recommended for security (not accessible via JavaScript)
     secure: true, // Only send over HTTPS
     sameSite: "None", // Required if your site is not on the same domain
