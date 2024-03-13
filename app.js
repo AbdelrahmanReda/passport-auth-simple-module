@@ -67,7 +67,7 @@ app.use(
       domain:
         process.env.NODE_ENV === "production"
           ? "https://next-auth-app-six-delta.vercel.app"
-          : "http://localhost:3000",
+          : "http://localhost:3000/",
       path: "/",
       sameSite: "none",
     },
@@ -143,19 +143,47 @@ app.get("/auth/listAllSessions/", (req, res) => {
   });
 });
 
-app.post("/auth/login/", passport.authenticate("local"), (req, res) => {
-  const userData = JSON.stringify(req.user);
-  // Set a custom cookie
-  res.cookie("myCustomCookie", userData, {
-    maxAge: 24 * 60 * 60 * 100,
-    secure: true,
-    httpOnly: true,
-    sameSite: "none",
-    domain: "https://localhost:3000",
-  });
-  console.log("req.user", req.user);
-  res.json({ message: "User logged in successfully", user: req.user });
-});
+// Routes
+app.post(
+  "/auth/login/",
+  passport.authenticate("local", { failureRedirect: "/login" }),
+  (req, res) => {
+    const userData = JSON.stringify(req.user);
+    // Set a custom cookie
+    res.cookie("myCustomCookie", userData, {
+      maxAge: 24 * 60 * 60 * 100, // Corrected lifespan (it's likely you intended for the cookie to last 100 days, not 8640 seconds)
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Conditional SameSite policy
+      // domain is removed to let the browser set the cookie for the current domain by default
+    });
+    console.log("req.user", req.user);
+    console.log("response headers", res.getHeaders());
+    res.json({ message: "User logged in successfully", user: req.user });
+  },
+);
+
+/*app.post(
+  "/auth/login/",
+  passport.authenticate("local"),
+  {
+    successRedirect: "/protected",
+    failureRedirect: "/auth/google/failure",
+  },
+  (req, res) => {
+    const userData = JSON.stringify(req.user);
+    // Set a custom cookie
+    res.cookie("myCustomCookie", userData, {
+      maxAge: 24 * 60 * 60 * 100,
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+      domain: "https://localhost:3000",
+    });
+    console.log("req.user", req.user);
+    res.json({ message: "User logged in successfully", user: req.user });
+  },
+);*/
 
 app.post("/auth/register/", async (req, res) => {
   const { email, password } = req.body;
