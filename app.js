@@ -5,6 +5,8 @@ const cors = require("cors");
 const SQLiteStore = require("connect-sqlite3")(session);
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const cookieParser = require("cookie-parser");
+
 require("./auth");
 const morgan = require("morgan");
 const app = express();
@@ -54,6 +56,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use(
   session({
@@ -144,10 +147,17 @@ app.get("/auth/listAllSessions/", (req, res) => {
 });
 
 app.post("/set-cookie-test", (req, res) => {
-  console.log("req.headers", req.headers);
-  console.log("req.cookies", req.cookies);
-  res.cookie("myCustomCookie", "test");
-  res.json({ message: "Cookie set successfully" });
+  // You should specify a domain only if you're setting a cookie across subdomains
+  // For a different domain, the browser handles based on the request origin
+  // Domain attribute might be omitted or set explicitly if managing subdomains
+  res.cookie("yourCookieName", "yourCookieValue", {
+    // domain: '.example.com', // Omit or adjust if setting cookies for subdomains
+    path: "/",
+    httpOnly: true, // Recommended for security (not accessible via JavaScript)
+    secure: true, // Only send over HTTPS
+    sameSite: "None", // Required if your site is not on the same domain
+  });
+  res.send("Cookie set");
 });
 
 // Routes
