@@ -146,13 +146,7 @@ app.get("/auth/listAllSessions/", (req, res) => {
 app.post("/set-cookie-test", (req, res) => {
   console.log("req.headers", req.headers);
   console.log("req.cookies", req.cookies);
-  res.cookie("myCustomCookie", "test", {
-    maxAge: 48 * 60 * 60 * 100, // Corrected lifespan (it's likely you intended for the cookie to last 100 days, not 8640 seconds)
-    secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-    httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Conditional SameSite policy
-    // domain is removed to let the browser set the cookie for the current domain by default
-  });
+  res.cookie("myCustomCookie", "test");
   res.json({ message: "Cookie set successfully" });
 });
 
