@@ -149,7 +149,7 @@ app.get("/auth/listAllSessions/", (req, res) => {
 app.post("/set-cookie-test", (req, res) => {
   res.header(
     "Set-Cookie",
-    `username="john doe"; Path=/; HttpOnly; Secure; SameSite=None;`,
+    `username="john doe"; Path=/; HttpOnly; Secure; SameSite=None; Domain=${process.env.NODE_ENV === "production" ? "https://next-auth-app-six-delta.vercel.app" : "http://localhost:3000"}`,
   );
 
   res.cookie("yourCookieName", "yourCookieValue", {
