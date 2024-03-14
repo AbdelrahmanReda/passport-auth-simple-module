@@ -161,10 +161,10 @@ app.post("/set-cookie-test", (req, res) => {
   // Allow credentials (e.g., cookies, authentication) to be included in requests
   res.setHeader("Access-Control-Allow-Credentials", true);
   res.setHeader("");
-  res.setHeader("set-cookie", [
-    "cookie1=value1; SameSite=Lax",
-    "cookie2=value2; SameSite=None; Secure",
-  ]);
+  res.setHeader(
+    "set-cookie",
+    "sessionid=abc123; Path=/; Secure; SameSite=None; HttpOnly",
+  );
   res.cookie("yourCookieName", "yourCookieValue", {
     // domain: '.example.com', // Omit or adjust if setting cookies for subdomains
     path: "/",
