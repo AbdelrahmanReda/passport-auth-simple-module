@@ -147,26 +147,12 @@ app.get("/auth/listAllSessions/", (req, res) => {
 });
 
 app.post("/set-cookie-test", (req, res) => {
-  // You should specify a domain only if you're setting a cookie across subdomains
-  // For a different domain, the browser handles based on the request origin
-  // Domain attribute might be omitted or set explicitly if managing subdomains
-  // Allow requests from any origin
-
-  // Allow specific HTTP methods
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-
-  // Allow specific headers to be sent in the request
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  // Allow credentials (e.g., cookies, authentication) to be included in requests
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  res.setHeader("");
-  res.setHeader(
-    "set-cookie",
-    "sessionid=abc123; Path=/; Secure; SameSite=None; HttpOnly",
+  res.header(
+    "Set-Cookie",
+    `username="john doe"; Path=/; HttpOnly; Secure; SameSite=None;`,
   );
+
   res.cookie("yourCookieName", "yourCookieValue", {
-    // domain: '.example.com', // Omit or adjust if setting cookies for subdomains
     path: "/",
     httpOnly: true, // Recommended for security (not accessible via JavaScript)
     secure: true, // Only send over HTTPS
