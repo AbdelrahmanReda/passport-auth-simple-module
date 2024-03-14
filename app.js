@@ -151,7 +151,6 @@ app.post("/set-cookie-test", (req, res) => {
   // For a different domain, the browser handles based on the request origin
   // Domain attribute might be omitted or set explicitly if managing subdomains
   // Allow requests from any origin
-  res.setHeader("Access-Control-Allow-Origin", "*");
 
   // Allow specific HTTP methods
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
