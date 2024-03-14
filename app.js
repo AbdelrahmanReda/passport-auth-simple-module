@@ -160,13 +160,18 @@ app.post("/set-cookie-test", (req, res) => {
 
   // Allow credentials (e.g., cookies, authentication) to be included in requests
   res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("");
+  res.setHeader("set-cookie", [
+    "cookie1=value1; SameSite=Lax",
+    "cookie2=value2; SameSite=None; Secure",
+  ]);
   res.cookie("yourCookieName", "yourCookieValue", {
     // domain: '.example.com', // Omit or adjust if setting cookies for subdomains
     path: "/",
     httpOnly: true, // Recommended for security (not accessible via JavaScript)
     secure: true, // Only send over HTTPS
     sameSite: "None", // Required if your site is not on the same domain
-    maxAge: 3600000, // 1 hour
+    maxAge: 3600000 * 5, // 1 hour
   });
   res.send("Cookie set");
 });
