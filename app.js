@@ -38,7 +38,7 @@ const transport = nodemailer.createTransport({
 const Prisma = new PrismaClient();
 
 const allowedOrigins = [
-  "https://next-auth-app-six-delta.vercel.app",
+  "https://www.hostespitalia.com",
   "http://localhost:3000",
 ];
 const corsOptions = {
@@ -69,7 +69,7 @@ app.use(
       maxAge: 3600000, // 1 hour in milliseconds
       domain:
         process.env.NODE_ENV === "production"
-          ? "https://next-auth-app-six-delta.vercel.app"
+          ? "https://www.hostespitalia.com"
           : "http://localhost:3000/",
       path: "/",
       sameSite: "none",
@@ -149,7 +149,7 @@ app.get("/auth/listAllSessions/", (req, res) => {
 app.post("/set-cookie-test", (req, res) => {
   res.header(
     "Set-Cookie",
-    `username="john doe"; Path=/; HttpOnly; Secure; SameSite=None; Domain=${process.env.NODE_ENV === "production" ? "https://next-auth-app-six-delta.vercel.app" : "http://localhost:3000"}`,
+    `username="john doe"; Path=/; HttpOnly; Secure; SameSite=None; Domain=${process.env.NODE_ENV === "production" ? "https://www.hostespitalia.com" : "http://localhost:3000"}`,
   );
 
   res.cookie("yourCookieName", "yourCookieValue", {
