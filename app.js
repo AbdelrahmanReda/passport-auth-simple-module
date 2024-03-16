@@ -148,9 +148,9 @@ app.post("/set-cookie-test", (req, res) => {
 
   res.cookie("yourCookieName", "yourCookieValue", {
     path: "/",
-    httpOnly: true, // Recommended for security (not accessible via JavaScript)
-    secure: true, // Only send over HTTPS
-    sameSite: "None", // Required if your site is not on the same domain
+    httpOnly: false, // Recommended for security (not accessible via JavaScript)
+    secure: false, // Only send over HTTPS
+    sameSite: "Strict", // Required if your site is not on the same domain
     maxAge: 3600000 * 5, // 1 hour
   });
   res.send("Cookie set");
