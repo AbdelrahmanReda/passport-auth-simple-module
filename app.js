@@ -159,9 +159,17 @@ app.post("/set-cookie-test", (req, res) => {
 });
 
 // Routes
+
+app.get("/failure", (req, res) => {
+  return res.send("failed to login");
+});
+
 app.post(
-  "/auth/login/",
-  passport.authenticate("local", { failureRedirect: "/login" }),
+  "/auth/login",
+  passport.authenticate("local", {
+    failureRedirect: "/failure",
+  }),
+
   (req, res) => {
     const userData = JSON.stringify(req.user);
     // Set a custom cookie

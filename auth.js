@@ -10,11 +10,14 @@ const Prisma = new PrismaClient();
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
+    console.log("1# inside local strategy");
     const user = await Prisma.user.findUnique({
       where: {
         email: username,
       },
     });
+
+    console.log("2# inside local strategy");
     if (!user) {
       return done(null, false, { message: "Incorrect username." });
     }
