@@ -67,10 +67,6 @@ app.use(
       secure: false,
       httpOnly: false,
       maxAge: 3600000, // 1 hour in milliseconds
-      domain:
-        process.env.NODE_ENV === "production"
-          ? "https://www.hostespitalia.com"
-          : "http://localhost:3000/",
       path: "/",
       sameSite: "none",
     },
