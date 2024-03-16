@@ -5,7 +5,6 @@ const cors = require("cors");
 const SQLiteStore = require("connect-sqlite3")(session);
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const MongoDBStore = require("connect-mongodb-session")(session);
-const cookieParser = require("cookie-parser");
 
 require("./auth");
 const morgan = require("morgan");
@@ -56,27 +55,26 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(cookieParser());
-
 app.use(
   session({
+    proxy: true,
     secret: "iUn4Iu7sePefyNrBqxW6TfwHnCdnf1lxIxokZeXmOvLIgG6RSaMHN",
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: true,
-      httpOnly: true,
-      maxAge: 3600000, // 1 hour in milliseconds
-      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: false,
+      secure: false,
       sameSite: "none",
     },
-    store: client,
   }),
 );
+app.set("view engine", "ejs");
+app.engine("ejs", require("ejs").__express);
 
-app.use(passport.authenticate("session"));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize()); // init passport on every route call
+app.use(passport.session()); //allow passport to use "express-session"
+app.use(express.json());
 
 function isLoggedIn(req, res, next) {
   console.log("req.Header:", req.headers);
@@ -171,6 +169,7 @@ app.post(
   }),
 
   (req, res) => {
+    console.log("response headers", res.getHeaders());
     const userData = JSON.stringify(req.user);
     // Set a custom cookie
     res.cookie("myCustomCookie", userData, {
@@ -373,5 +372,9 @@ app.post("/send-email", async (req, res) => {
 
   res.json({ message: "Email sent successfully" });
 });
+
+app.use(passport.authenticate("session"));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.listen(5000, () => console.log("listening on port: 5000"));
