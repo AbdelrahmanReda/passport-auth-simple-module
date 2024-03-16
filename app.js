@@ -149,7 +149,7 @@ app.get("/auth/listAllSessions/", (req, res) => {
 app.post("/set-cookie-test", (req, res) => {
   res.header(
     "Set-Cookie",
-    `username="john doe"; Path=/; HttpOnly; Secure; SameSite=None; Domain=${process.env.NODE_ENV === "production" ? "https://www.hostespitalia.com" : "http://localhost:3000"}`,
+    `username="john doe"; Path=/; HttpOnly; Secure; SameSite=None; `,
   );
 
   res.cookie("yourCookieName", "yourCookieValue", {
