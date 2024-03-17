@@ -176,6 +176,7 @@ app.post(
       maxAge: 48 * 60 * 60 * 100, // Corrected lifespan (it's likely you intended for the cookie to last 100 days, not 8640 seconds)
       secure: false,
       httpOnly: false,
+      domain: "hostespitalia.com",
       // domain is removed to let the browser set the cookie for the current domain by default
     });
     console.log("req.user", req.user);
