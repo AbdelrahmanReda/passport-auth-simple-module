@@ -172,7 +172,7 @@ app.post(
     console.log("response headers", res.getHeaders());
     const userData = JSON.stringify(req.user);
     // Set a custom cookie
-    res.cookie("myCustomCookie", userData, {
+    res.cookie("myCustomCookieReda", userData, {
       maxAge: 48 * 60 * 60 * 100, // Corrected lifespan (it's likely you intended for the cookie to last 100 days, not 8640 seconds)
       secure: false,
       httpOnly: false,
