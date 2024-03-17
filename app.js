@@ -66,6 +66,7 @@ app.use(
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: "hostespitalia.com",
     },
   }),
 );
