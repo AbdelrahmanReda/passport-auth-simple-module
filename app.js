@@ -165,9 +165,7 @@ app.get("/failure", (req, res) => {
 
 app.post(
   "/auth/login",
-  passport.authenticate("local", {
-    failureRedirect: "/failure",
-  }),
+  passport.authenticate("local"),
 
   (req, res) => {
     console.log("response headers", res.getHeaders());
