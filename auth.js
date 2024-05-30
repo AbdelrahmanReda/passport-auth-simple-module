@@ -31,9 +31,10 @@ passport.use(
 passport.use(
   new GoogleStrategy(
     {
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      clientID:
+        "994055224501-tb3om5ranc4j9qm007eojm7gn1tn70b0.apps.googleusercontent.com",
+      clientSecret: "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",
+      callbackURL: "https://api.hostespitalia.com/auth/google/callback",
     },
     async function (request, accessToken, refreshToken, profile, done) {
       const user = await Prisma.user.findUnique({
